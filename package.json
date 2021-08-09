@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/bizurd/vue-portable-text/issues"
   },
-  "homepage": "https://github.com/bizurd/vue-portable-text#readme"
+  "homepage": "https://github.com/bizurd/vue-portable-text#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2"
+  }
 }
