@@ -1,0 +1,19 @@
+{
+  "name": "@bizurd/vue-portable-text",
+  "version": "0.1.0",
+  "description": "A vue component to render portable text",
+  "main": "dist/vue-portable-text.umd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bizurd/vue-portable-text.git"
+  },
+  "author": "Andre van Tonder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bizurd/vue-portable-text/issues"
+  },
+  "homepage": "https://github.com/bizurd/vue-portable-text#readme"
+}
