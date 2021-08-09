@@ -2,7 +2,6 @@
   "name": "@bizurd/vue-portable-text",
   "version": "0.1.0",
   "description": "A vue component to render portable text",
-  "main": "dist/vue-portable-text.umd.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,10 +15,23 @@
     "url": "https://github.com/bizurd/vue-portable-text/issues"
   },
   "homepage": "https://github.com/bizurd/vue-portable-text#readme",
+  "dependencies": {
+    "vue-demi": "^0.11.2"
+  },
+  "peerDependencies": {
+    "@vue/composition-api": "^1.0.0-rc.1",
+    "vue": "^2.0.0 || >=3.0.0"
+  },
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-vue": "^7.15.1",
     "lint-staged": "^11.1.2",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "vue": "^3.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,js,vue}": "eslint --fix",
+    "*.{ts,js,vue,md}": "prettier --write"
   }
 }
