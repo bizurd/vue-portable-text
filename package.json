@@ -2,8 +2,13 @@
   "name": "@bizurd/vue-portable-text",
   "version": "0.1.0",
   "description": "A vue component to render portable text",
+  "main": "dist/vue-portable-text.js",
+  "module": "dist/vue-portable-text.esm.js",
+  "unpkg": "dist/vue-portable-text.umd.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "bili"
   },
   "repository": {
     "type": "git",
@@ -23,12 +28,17 @@
     "vue": "^2.0.0 || >=3.0.0"
   },
   "devDependencies": {
+    "bili": "^5.0.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-vue": "^7.15.1",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
-    "vue": "^3.0.0"
+    "rollup-plugin-typescript2": "^0.30.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "typescript": "^4.3.5",
+    "vue": "^3.0.0",
+    "vue-template-compiler": "^2.6.14"
   },
   "lint-staged": {
     "*.{ts,js,vue}": "eslint --fix",
