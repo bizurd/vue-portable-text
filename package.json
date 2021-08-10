@@ -6,9 +6,12 @@
   "module": "dist/vue-portable-text.esm.js",
   "unpkg": "dist/vue-portable-text.umd.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "bili"
+    "build": "bili",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -27,11 +30,17 @@
     "@vue/composition-api": "^1.0.0-rc.1",
     "vue": "^2.0.0 || >=3.0.0"
   },
+  "peerDependenciesMeta": {
+    "@vue/composition-api": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "bili": "^5.0.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-vue": "^7.15.1",
+    "husky": "^7.0.1",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
     "rollup-plugin-typescript2": "^0.30.0",
