@@ -23,30 +23,28 @@
     "url": "https://github.com/bizurd/vue-portable-text/issues"
   },
   "homepage": "https://github.com/bizurd/vue-portable-text#readme",
-  "dependencies": {
-    "vue-demi": "^0.11.2"
-  },
   "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-rc.1",
-    "vue": "^2.0.0 || >=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
+    "vue": "^2.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^26.0.24",
+    "@vue/test-utils": "^1.2.2",
+    "babel-jest": "^27.0.6",
     "bili": "^5.0.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-vue": "^7.15.1",
     "husky": "^7.0.1",
+    "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "rollup-plugin-vue": "^6.0.0",
     "typescript": "^4.3.5",
-    "vue": "^3.0.0",
+    "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.14"
   },
   "lint-staged": {
