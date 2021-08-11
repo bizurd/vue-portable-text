@@ -9,10 +9,9 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     'prettier',
     'plugin:jest-dom/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
-  plugins: ['jest-dom'],
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-  },
+  plugins: ['jest-dom', '@typescript-eslint'],
+  parser: '@typescript-eslint/parser',
 }
