@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "build": "bili",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,9 @@
     "url": "https://github.com/bizurd/vue-portable-text/issues"
   },
   "homepage": "https://github.com/bizurd/vue-portable-text#readme",
+  "dependencies": {
+    "defu": "^5.0.0"
+  },
   "peerDependencies": {
     "vue": "^2.0.0"
   },
@@ -30,12 +34,14 @@
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-typescript": "^7.15.0",
+    "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^26.0.24",
     "@vue/test-utils": "^1.2.2",
     "babel-jest": "^27.0.6",
     "bili": "^5.0.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest-dom": "^3.9.0",
     "eslint-plugin-vue": "^7.15.1",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
@@ -43,6 +49,7 @@
     "prettier": "^2.3.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "rollup-plugin-vue": "^6.0.0",
+    "ts-node": "^10.2.0",
     "typescript": "^4.3.5",
     "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.14"
