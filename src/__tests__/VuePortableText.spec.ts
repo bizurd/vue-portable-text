@@ -321,7 +321,7 @@ test('block.normal (listItem=numeric) * 3 with nested bullet list > plain text',
   })
 
   expect(wrapper.element).toContainHTML(
-    `<${container}><${ol}><${li}><${p}>${plainText}</${p}></${li}><${li}><${ul}><${li}><${p}>${plainText}</${p}></${li}></${ul}></${li}><${li}><${p}>${plainText}</${p}></${li}></${ol}></${container}>`
+    `<${container}><${ol}><${li}><${p}>${plainText}</${p}><${ul}><${li}><${p}>${plainText}</${p}></${li}></${ul}></${li}><${li}><${p}>${plainText}</${p}></${li}></${ol}></${container}>`
   )
 })
 

@@ -5,6 +5,47 @@ import { Serializers } from './types/serializers'
 type Blocks = any[] | any
 type Block = any
 
+const createList = (block: Block, blocks: Blocks, serializers: Serializers) => {
+  const listItems = getListItems(block, blocks, serializers)
+
+  return {
+    _type: 'list',
+    listItems,
+    list: block.listItem,
+  }
+}
+
+const getListItems = (
+  block: Block,
+  blocks: Blocks,
+  serializers: Serializers
+) => {
+  const listItems = []
+
+  const level = block.level
+  const listStyleType = block.listItem
+  while (block) {
+    if (block.listItem === listStyleType && block.level === level) {
+      listItems.push({
+        _type: 'listItem',
+        level: block.level,
+        children: [block],
+      })
+    } else if (block.level > level && listItems.length) {
+      const list = createList(block, blocks, serializers)
+
+      const lastListItem = listItems[listItems.length - 1]
+      lastListItem.children = [...lastListItem.children, list]
+    } else {
+      blocks.unshift(block)
+      break
+    }
+    block = blocks.shift()
+  }
+
+  return listItems
+}
+
 const groupListItems = (blocks: Blocks, serializers: Serializers) => {
   // Copy the blocks array so we can modify it
   blocks = blocks.slice()
@@ -12,28 +53,9 @@ const groupListItems = (blocks: Blocks, serializers: Serializers) => {
   const newBlocks = []
 
   while (blocks.length) {
-    let block = blocks.shift()
+    const block = blocks.shift()
     if (block && block.listItem) {
-      while (block && block.listItem) {
-        const children = []
-        const listStyleType = block.listItem
-        while (block && block.listItem === listStyleType) {
-          children.push(block)
-          block = blocks.shift()
-        }
-
-        const style =
-          listStyleType === 'number'
-            ? serializers.list.number
-            : serializers.list.bullet
-
-        newBlocks.push({
-          _type: 'block',
-          style,
-          children,
-          listStyleType,
-        })
-      }
+      newBlocks.push(createList(block, blocks, serializers))
     } else {
       newBlocks.push(block)
     }
@@ -49,10 +71,29 @@ const renderSpan = (
 ) => {
   if (!block.marks || block.marks.length === 0) return block.text
 
-  return block.marks.reduce((elements: any, mark: Block) => {
+  return block.marks.reduce((elements: any, mark: string) => {
     const el = serializers.marks[mark]
     return el ? h(el, { props: { block } }, [elements]) : elements
   }, block.text)
+}
+
+const renderList = (
+  h: CreateElement,
+  block: Block,
+  serializers: Serializers
+) => {
+  let children = []
+  if (block.listItems) {
+    children = block.listItems.map((listItem: Block) =>
+      renderListItem(h, listItem, serializers)
+    )
+  }
+
+  return h(
+    block.list === 'number' ? serializers.list.number : serializers.list.bullet,
+    { props: { block } },
+    children
+  )
 }
 
 const renderListItem = (
@@ -67,13 +108,7 @@ const renderListItem = (
     )
   }
 
-  const child = h(
-    serializers.styles[block.style],
-    { props: { block } },
-    children
-  )
-
-  return h(serializers.listItem, { props: { block } }, [child])
+  return h(serializers.listItem, { props: { block } }, children)
 }
 
 const renderChild = (
@@ -82,7 +117,8 @@ const renderChild = (
   serializers: Serializers
 ) => {
   if (block._type === 'span') return renderSpan(h, block, serializers)
-  if (block.listItem) return renderListItem(h, block, serializers)
+  if (block._type === 'list') return renderList(h, block, serializers)
+  if (block._type === 'block') return renderBlock(h, block, serializers)
   return renderCustomType(h, block, serializers)
 }
 
@@ -106,8 +142,6 @@ const renderCustomType = (
   block: Block,
   serializers: Serializers
 ) => {
-  const serializer = serializers.types[block._type]
-
   let children = []
   if (block.children) {
     children = block.children.map((child: Block) =>
@@ -115,6 +149,7 @@ const renderCustomType = (
     )
   }
 
+  const serializer = serializers.types[block._type]
   if (serializer) return h(serializer, { props: { block } }, children)
 
   return h(serializers.styles.normal, {}, children)
@@ -179,6 +214,8 @@ export default Vue.extend({
     const children = blocks.map((block) => {
       if (block._type === 'block') {
         return renderBlock(h, block, serializers)
+      } else if (block._type === 'list') {
+        return renderList(h, block, serializers)
       } else {
         return renderCustomType(h, block, serializers)
       }
