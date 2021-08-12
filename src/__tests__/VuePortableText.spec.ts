@@ -230,7 +230,7 @@ test('block.normal (listItem=bullet) * 3 > plain text', () => {
   })
 
   expect(wrapper.element).toContainHTML(
-    `<${container}><${ul}><${li}><${p}>${plainText}</${li}><${li}>${plainText}</${li}><${li}>${plainText}</${p}></${li}></${ul}></${container}>`
+    `<${container}><${ul}><${li}><${p}>${plainText}</${p}></${li}><${li}><${p}>${plainText}</${p}></${li}><${li}><${p}>${plainText}</${p}></${li}></${ul}></${container}>`
   )
 })
 

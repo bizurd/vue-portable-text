@@ -67,7 +67,13 @@ const renderListItem = (
     )
   }
 
-  return h(serializers.listItem, { props: { block } }, children)
+  const child = h(
+    serializers.styles[block.style],
+    { props: { block } },
+    children
+  )
+
+  return h(serializers.listItem, { props: { block } }, [child])
 }
 
 const renderChild = (
