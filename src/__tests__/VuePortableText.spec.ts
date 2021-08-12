@@ -427,7 +427,12 @@ test('block.normal > customType', () => {
           children: [
             {
               _type: 'customType',
-              text: text,
+              children: [
+                {
+                  _type: 'span',
+                  text: text,
+                },
+              ],
             },
           ],
         },
@@ -436,6 +441,6 @@ test('block.normal > customType', () => {
   })
 
   expect(wrapper.element).toContainHTML(
-    `<${container}><${p}><span data-type="customType">${text}</span><${p}></${container}>`
+    `<${container}><${p}><span data-type="customType">${text}</span></${p}></${container}>`
   )
 })
