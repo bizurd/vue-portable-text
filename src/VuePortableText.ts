@@ -111,7 +111,7 @@ const renderCustomType = (
 
   if (serializer) return h(serializer, { props: { block } }, children)
 
-  return h('p', {}, children)
+  return h(serializers.styles.normal, {}, children)
 }
 
 export const defaultSerializers = {
@@ -150,7 +150,7 @@ export default Vue.extend({
   props: {
     as: {
       type: String,
-      default: defaultSerializers.container,
+      default: undefined,
     },
     blocks: {
       type: Array as PropType<any[] | any>,
@@ -178,6 +178,6 @@ export default Vue.extend({
       }
     })
 
-    return h(this.as || serializers.container || 'div', {}, children)
+    return h(this.as || serializers.container, {}, children)
   },
 })
