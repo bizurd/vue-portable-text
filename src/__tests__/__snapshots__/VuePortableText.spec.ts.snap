@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`as = article 1`] = `<article />`;
+
+exports[`block.h1 > plain text 1`] = `
+<div>
+  <h1>
+    This should be a h1
+  </h1>
+</div>
+`;
+
+exports[`block.h3 (listItem=bullet) > text with marks 1`] = `
+<div>
+  <ul>
+    <li>
+      <h3>
+        This should be a h3
+        <a
+          href="https://example.com"
+        >
+          <strong>
+            This should be a strong link
+          </strong>
+        </a>
+      </h3>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`block.h3 > plain text + block.blockquote > plain text 1`] = `
+<div>
+  <h3>
+    This should be a h3
+  </h3>
+  <blockquote>
+    This should be a blockquote
+  </blockquote>
+</div>
+`;
+
+exports[`block.normal (listItem=bullet) * 3 > plain text 1`] = `
+<div>
+  <ul>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+    </li>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+    </li>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`block.normal (listItem=numeric) * 3 with nested bullet list > plain text 1`] = `
+<div>
+  <ol>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+      <ul>
+        <li>
+          <p>
+            This should be plain text
+          </p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+    </li>
+  </ol>
+</div>
+`;
+
+exports[`block.normal > customType 1`] = `
+<div>
+  <p>
+    <span
+      data-type="customType"
+    >
+      This should be normal text
+    </span>
+  </p>
+</div>
+`;
+
+exports[`block.normal > plain text 1`] = `
+<div>
+  <p>
+    This should be normal text
+  </p>
+</div>
+`;
+
+exports[`block.normal > text with marks 1`] = `
+<div>
+  <p>
+    This should be plain text
+    <a
+      href="https://example.com"
+    >
+      <strong>
+        This should be a strong link
+      </strong>
+    </a>
+  </p>
+</div>
+`;
+
+exports[`block.normal > text with nonexistent marks 1`] = `
+<div>
+  <p>
+    This should be plain textThis should be still be plain text
+  </p>
+</div>
+`;
+
+exports[`customType > text 1`] = `
+<div>
+  <h1
+    data-type="customType"
+  >
+    This should be normal text
+  </h1>
+</div>
+`;
+
+exports[`no blocks or serializers 1`] = `<div />`;
+
+exports[`non-existent customType > text 1`] = `
+<div>
+  <p>
+    This should be normal text
+  </p>
+</div>
+`;
+
+exports[`serializers = null 1`] = `<div />`;
+
+exports[`serializers.container = article 1`] = `<article />`;

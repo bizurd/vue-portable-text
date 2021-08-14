@@ -2,24 +2,12 @@
 import { mount } from '@vue/test-utils'
 import Vue from 'vue'
 import VuePortableText from '../VuePortableText'
-import { defaultSerializers as ds } from '../serializers'
-
-const container = ds.container
-const p = ds.styles.normal
-const h1 = ds.styles.h1
-const h3 = ds.styles.h3
-const blockquote = ds.styles.blockquote
-const strong = ds.marks.strong
-const a = 'a'
-const ul = ds.list.bullet
-const ol = ds.list.number
-const li = ds.listItem
 
 test('no blocks or serializers', () => {
   const wrapper = mount(VuePortableText)
 
   expect(wrapper.element).toBeEmptyDOMElement()
-  expect(wrapper.element).toContainHTML(`<${ds.container}></${ds.container}>`)
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('serializers = null', () => {
@@ -30,7 +18,7 @@ test('serializers = null', () => {
   })
 
   expect(wrapper.element).toBeEmptyDOMElement()
-  expect(wrapper.element).toContainHTML(`<${ds.container}></${ds.container}>`)
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('as = article', () => {
@@ -41,7 +29,7 @@ test('as = article', () => {
   })
 
   expect(wrapper.element).toBeEmptyDOMElement()
-  expect(wrapper.element).toContainHTML(`<article></article>`)
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('serializers.container = article', () => {
@@ -54,7 +42,7 @@ test('serializers.container = article', () => {
   })
 
   expect(wrapper.element).toBeEmptyDOMElement()
-  expect(wrapper.element).toContainHTML(`<article></article>`)
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal > plain text', () => {
@@ -77,9 +65,7 @@ test('block.normal > plain text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${p}>${normalText}</${p}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.h1 > plain text', () => {
@@ -103,9 +89,7 @@ test('block.h1 > plain text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${h1}>${h1Text}</${h1}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.h3 > plain text + block.blockquote > plain text', () => {
@@ -141,9 +125,7 @@ test('block.h3 > plain text + block.blockquote > plain text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${h3}>${h3Text}</${h3}><${blockquote}>${blockquoteText}</${blockquote}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal > text with marks', () => {
@@ -179,9 +161,7 @@ test('block.normal > text with marks', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${p}>${plainText}<${a} href="https://example.com"><${strong}>${strongLinkText}</${strong}></${a}></${p}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal > text with nonexistent marks', () => {
@@ -210,9 +190,7 @@ test('block.normal > text with nonexistent marks', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${p}>${plainText}${stillPlainText}</${p}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal (listItem=bullet) * 3 > plain text', () => {
@@ -261,9 +239,7 @@ test('block.normal (listItem=bullet) * 3 > plain text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${ul}><${li}><${p}>${plainText}</${p}></${li}><${li}><${p}>${plainText}</${p}></${li}><${li}><${p}>${plainText}</${p}></${li}></${ul}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.h3 (listItem=bullet) > text with marks', () => {
@@ -301,9 +277,7 @@ test('block.h3 (listItem=bullet) > text with marks', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${ul}><${li}><${h3}>${h3Text}<${a} href="https://example.com"><${strong}>${strongLinkText}</${strong}></${a}></${h3}></${li}></${ul}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal (listItem=numeric) * 3 with nested bullet list > plain text', () => {
@@ -352,9 +326,7 @@ test('block.normal (listItem=numeric) * 3 with nested bullet list > plain text',
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${ol}><${li}><${p}>${plainText}</${p}><${ul}><${li}><${p}>${plainText}</${p}></${li}></${ul}></${li}><${li}><${p}>${plainText}</${p}></${li}></${ol}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('customType > text', () => {
@@ -397,9 +369,7 @@ test('customType > text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><h1 data-type="customType">${text}</h1></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('non-existent customType > text', () => {
@@ -421,9 +391,7 @@ test('non-existent customType > text', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${p}>${text}</${p}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
 
 test('block.normal > customType', () => {
@@ -472,7 +440,5 @@ test('block.normal > customType', () => {
     },
   })
 
-  expect(wrapper.element).toContainHTML(
-    `<${container}><${p}><span data-type="customType">${text}</span></${p}></${container}>`
-  )
+  expect(wrapper.element).toMatchSnapshot()
 })
