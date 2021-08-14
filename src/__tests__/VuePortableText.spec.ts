@@ -1,7 +1,8 @@
 /* eslint-disable vue/one-component-per-file */
 import { mount } from '@vue/test-utils'
 import Vue from 'vue'
-import VuePortableText, { defaultSerializers as ds } from '../VuePortableText'
+import VuePortableText from '../VuePortableText'
+import { defaultSerializers as ds } from '../serializers'
 
 const container = ds.container
 const p = ds.styles.normal
@@ -9,7 +10,7 @@ const h1 = ds.styles.h1
 const h3 = ds.styles.h3
 const blockquote = ds.styles.blockquote
 const strong = ds.marks.strong
-const a = ds.marks.link
+const a = 'a'
 const ul = ds.list.bullet
 const ol = ds.list.number
 const li = ds.listItem
@@ -180,6 +181,37 @@ test('block.normal > text with marks', () => {
 
   expect(wrapper.element).toContainHTML(
     `<${container}><${p}>${plainText}<${a} href="https://example.com"><${strong}>${strongLinkText}</${strong}></${a}></${p}></${container}>`
+  )
+})
+
+test('block.normal > text with nonexistent marks', () => {
+  const plainText = 'This should be plain text'
+  const stillPlainText = 'This should be still be plain text'
+
+  const wrapper = mount(VuePortableText, {
+    propsData: {
+      blocks: [
+        {
+          style: 'normal',
+          _type: 'block',
+          children: [
+            {
+              _type: 'span',
+              text: plainText,
+            },
+            {
+              _type: 'span',
+              marks: ['nonexistent'],
+              text: stillPlainText,
+            },
+          ],
+        },
+      ],
+    },
+  })
+
+  expect(wrapper.element).toContainHTML(
+    `<${container}><${p}>${plainText}${stillPlainText}</${p}></${container}>`
   )
 })
 

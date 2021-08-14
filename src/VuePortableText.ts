@@ -1,6 +1,8 @@
 import Vue, { CreateElement, PropType } from 'vue'
 import defu from 'defu'
 import { Serializers } from './types/serializers'
+import { VNode } from 'vue/types/umd'
+import { defaultSerializers } from './serializers'
 
 type Blocks = any[] | any
 type Block = any
@@ -67,13 +69,23 @@ const groupListItems = (blocks: Blocks, serializers: Serializers) => {
 const renderSpan = (
   h: CreateElement,
   block: Block,
-  serializers: Serializers
+  serializers: Serializers,
+  markDefs: { _key: string; _type: string; [x: string]: any }[]
 ) => {
   if (!block.marks || block.marks.length === 0) return block.text
 
-  return block.marks.reduce((elements: any, mark: string) => {
-    const el = serializers.marks[mark]
-    return el ? h(el, { props: { block } }, [elements]) : elements
+  const marks = block.marks.slice().reverse()
+  return marks.reduce((previousVNode: VNode | string, mark: string) => {
+    let el = serializers.marks[mark]
+    const markDef = markDefs.find((markDef) => markDef._key === mark)
+
+    if (markDef) {
+      el ||= serializers.marks[markDef._type]
+    }
+
+    return el
+      ? h(el, { props: { block, markDef } }, [previousVNode])
+      : previousVNode
   }, block.text)
 }
 
@@ -101,25 +113,34 @@ const renderListItem = (
   block: Block,
   serializers: Serializers
 ) => {
-  let children = []
-  if (block.children) {
-    children = block.children.map((child: Block) =>
-      renderChild(h, child, serializers)
-    )
-  }
-
-  return h(serializers.listItem, { props: { block } }, children)
+  return h(
+    serializers.listItem,
+    { props: { block } },
+    renderChildren(h, block, serializers)
+  )
 }
 
-const renderChild = (
+const renderChildren = (
   h: CreateElement,
-  block: Block,
+  block: Blocks,
   serializers: Serializers
 ) => {
-  if (block._type === 'span') return renderSpan(h, block, serializers)
-  if (block._type === 'list') return renderList(h, block, serializers)
-  if (block._type === 'block') return renderBlock(h, block, serializers)
-  return renderCustomType(h, block, serializers)
+  let children = []
+  if (block.children) {
+    children = block.children.map((child: Block) => {
+      if (child._type === 'span') {
+        return renderSpan(h, child, serializers, block.markDefs || [])
+      } else if (child._type === 'list') {
+        return renderList(h, child, serializers)
+      } else if (child._type === 'block') {
+        return renderBlock(h, child, serializers)
+      } else {
+        return renderCustomType(h, child, serializers)
+      }
+    })
+  }
+
+  return children
 }
 
 const renderBlock = (
@@ -127,14 +148,11 @@ const renderBlock = (
   block: Block,
   serializers: Serializers
 ) => {
-  let children = []
-  if (block.children) {
-    children = block.children.map((child: Block) =>
-      renderChild(h, child, serializers)
-    )
-  }
-
-  return h(serializers.styles[block.style], { props: { block } }, children)
+  return h(
+    serializers.styles[block.style],
+    { props: { block } },
+    renderChildren(h, block, serializers)
+  )
 }
 
 const renderCustomType = (
@@ -142,47 +160,15 @@ const renderCustomType = (
   block: Block,
   serializers: Serializers
 ) => {
-  let children = []
-  if (block.children) {
-    children = block.children.map((child: Block) =>
-      renderChild(h, child, serializers)
-    )
-  }
-
   const serializer = serializers.types[block._type]
-  if (serializer) return h(serializer, { props: { block } }, children)
+  if (serializer)
+    return h(
+      serializer,
+      { props: { block } },
+      renderChildren(h, block, serializers)
+    )
 
-  return h(serializers.styles.normal, {}, children)
-}
-
-export const defaultSerializers = {
-  types: {
-    span: 'span',
-  },
-  marks: {
-    strong: 'strong',
-    em: 'em',
-    link: 'a',
-    underline: 'u',
-  },
-  styles: {
-    h1: 'h1',
-    h2: 'h2',
-    h3: 'h3',
-    h4: 'h4',
-    h5: 'h5',
-    h6: 'h6',
-    ol: 'ol',
-    ul: 'ul',
-    normal: 'p',
-    blockquote: 'blockquote',
-  },
-  listItem: 'li',
-  list: {
-    number: 'ol',
-    bullet: 'ul',
-  },
-  container: 'div',
+  return h(serializers.styles.normal, {}, renderChildren(h, block, serializers))
 }
 
 export default Vue.extend({
