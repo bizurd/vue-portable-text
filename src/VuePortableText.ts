@@ -1,64 +1,89 @@
-import Vue, { CreateElement, PropType } from 'vue'
+import Vue, { CreateElement, PropType, VNodeChildren } from 'vue'
 import defu from 'defu'
 import { Serializers } from './types/serializers'
 import { VNode } from 'vue/types/umd'
 import { defaultSerializers } from './serializers'
+import { Blocks } from './types/blocks'
+import { isListItemBlock, ListItemBlock } from './types/listItemBlock'
+import { PortableTextObject } from './types/portableTextObject'
+import { ListItem } from './types/listItem'
+import { isList, List } from './types/list'
+import { Block, isBlock } from './types/block'
+import { isSpan, Span } from './types/span'
+import { isMarkDef, MarkDef } from './types/markDef'
 
-type Blocks = any[] | any
-type Block = any
-
-const createList = (block: Block, blocks: Blocks, serializers: Serializers) => {
-  const listItems = getListItems(block, blocks, serializers)
+const createList = (
+  listItemBlock: ListItemBlock,
+  blocks: Blocks,
+  serializers: Serializers
+): List => {
+  const listItems = getListItems(listItemBlock, blocks, serializers)
 
   return {
     _type: 'list',
-    listItems,
-    list: block.listItem,
+    children: listItems,
+    list: listItemBlock.listItem,
   }
 }
 
 const getListItems = (
-  block: Block,
+  listItemBlock: ListItemBlock,
   blocks: Blocks,
   serializers: Serializers
-) => {
-  const listItems = []
+): ListItem[] => {
+  const listItems: ListItem[] = []
 
-  const level = block.level
-  const listStyleType = block.listItem
+  let block: PortableTextObject = listItemBlock
+  const level = listItemBlock.level || 1
+  const listStyleType = listItemBlock.listItem
   while (block) {
-    if (block.listItem === listStyleType && block.level === level) {
+    if (
+      isListItemBlock(block) &&
+      block.listItem === listStyleType &&
+      block.level === level
+    ) {
       listItems.push({
         _type: 'listItem',
         level: block.level,
         children: [block],
       })
-    } else if (block.level > level && listItems.length) {
+    } else if (
+      isListItemBlock(block) &&
+      block.level !== undefined &&
+      block.level > level &&
+      listItems.length
+    ) {
       const list = createList(block, blocks, serializers)
 
       const lastListItem = listItems[listItems.length - 1]
-      lastListItem.children = [...lastListItem.children, list]
+      lastListItem.children = [...(lastListItem.children || []), list]
     } else {
       blocks.unshift(block)
       break
     }
-    block = blocks.shift()
+
+    const nextBlock = blocks.shift()
+    if (nextBlock) {
+      block = nextBlock
+    } else {
+      break
+    }
   }
 
   return listItems
 }
 
-const groupListItems = (blocks: Blocks, serializers: Serializers) => {
+const groupListItems = (blocks: Blocks, serializers: Serializers): Blocks => {
   // Copy the blocks array so we can modify it
   blocks = blocks.slice()
 
-  const newBlocks = []
+  const newBlocks: Blocks = []
 
   while (blocks.length) {
     const block = blocks.shift()
-    if (block && block.listItem) {
+    if (isListItemBlock(block)) {
       newBlocks.push(createList(block, blocks, serializers))
-    } else {
+    } else if (block) {
       newBlocks.push(block)
     }
   }
@@ -68,13 +93,13 @@ const groupListItems = (blocks: Blocks, serializers: Serializers) => {
 
 const renderSpan = (
   h: CreateElement,
-  block: Block,
+  span: Span,
   serializers: Serializers,
-  markDefs: { _key: string; _type: string; [x: string]: any }[]
-) => {
-  if (!block.marks || block.marks.length === 0) return block.text
+  markDefs: MarkDef[] = []
+): VNode | string => {
+  if (!span.marks || span.marks.length === 0) return span.text
 
-  const marks = block.marks.slice().reverse()
+  const marks = span.marks.slice().reverse()
   return marks.reduce((previousVNode: VNode | string, mark: string) => {
     let el = serializers.marks[mark]
     const markDef = markDefs.find((markDef) => markDef._key === mark)
@@ -84,55 +109,63 @@ const renderSpan = (
     }
 
     return el
-      ? h(el, { props: { block, markDef } }, [previousVNode])
+      ? h(el, { props: { block: span, markDef } }, [previousVNode])
       : previousVNode
-  }, block.text)
+  }, span.text)
 }
 
 const renderList = (
   h: CreateElement,
-  block: Block,
+  list: List,
   serializers: Serializers
-) => {
-  let children = []
-  if (block.listItems) {
-    children = block.listItems.map((listItem: Block) =>
+): VNode => {
+  let children: VNodeChildren = []
+  if (list.children) {
+    children = list.children.map((listItem: ListItem) =>
       renderListItem(h, listItem, serializers)
     )
   }
 
   return h(
-    block.list === 'number' ? serializers.list.number : serializers.list.bullet,
-    { props: { block } },
+    list.list === 'number' ? serializers.list.number : serializers.list.bullet,
+    { props: { block: list } },
     children
   )
 }
 
 const renderListItem = (
   h: CreateElement,
-  block: Block,
+  listItem: ListItem,
   serializers: Serializers
 ) => {
   return h(
     serializers.listItem,
-    { props: { block } },
-    renderChildren(h, block, serializers)
+    { props: { block: listItem } },
+    renderChildren(h, listItem, serializers)
   )
 }
 
 const renderChildren = (
   h: CreateElement,
-  block: Blocks,
+  parent: PortableTextObject,
   serializers: Serializers
 ) => {
-  let children = []
-  if (block.children) {
-    children = block.children.map((child: Block) => {
-      if (child._type === 'span') {
-        return renderSpan(h, child, serializers, block.markDefs || [])
-      } else if (child._type === 'list') {
+  let children: VNodeChildren = []
+  if (parent.children) {
+    children = parent.children.map((child: PortableTextObject) => {
+      if (isSpan(child)) {
+        const markDefs: MarkDef[] = []
+        if (parent.markDefs && Array.isArray(parent.markDefs)) {
+          parent.markDefs.forEach((markDef) => {
+            if (isMarkDef(markDef)) {
+              markDefs.push(markDef)
+            }
+          })
+        }
+        return renderSpan(h, child, serializers, markDefs)
+      } else if (isList(child)) {
         return renderList(h, child, serializers)
-      } else if (child._type === 'block') {
+      } else if (isBlock(child)) {
         return renderBlock(h, child, serializers)
       } else {
         return renderCustomType(h, child, serializers)
@@ -147,9 +180,9 @@ const renderBlock = (
   h: CreateElement,
   block: Block,
   serializers: Serializers
-) => {
+): VNode => {
   return h(
-    serializers.styles[block.style],
+    serializers.styles[block.style || 'normal'],
     { props: { block } },
     renderChildren(h, block, serializers)
   )
@@ -157,18 +190,18 @@ const renderBlock = (
 
 const renderCustomType = (
   h: CreateElement,
-  block: Block,
+  obj: PortableTextObject,
   serializers: Serializers
-) => {
-  const serializer = serializers.types[block._type]
+): VNode => {
+  const serializer = serializers.types[obj._type]
   if (serializer)
     return h(
       serializer,
-      { props: { block } },
-      renderChildren(h, block, serializers)
+      { props: { block: obj } },
+      renderChildren(h, obj, serializers)
     )
 
-  return h(serializers.styles.normal, {}, renderChildren(h, block, serializers))
+  return h(serializers.styles.normal, {}, renderChildren(h, obj, serializers))
 }
 
 export default Vue.extend({
@@ -180,7 +213,7 @@ export default Vue.extend({
       default: undefined,
     },
     blocks: {
-      type: Array as PropType<any[] | any>,
+      type: Array as PropType<Blocks>,
       default: () => [],
     },
     serializers: {
@@ -197,10 +230,12 @@ export default Vue.extend({
 
     const blocks = groupListItems(this.blocks, serializers)
 
+    console.log(JSON.stringify(blocks))
+
     const children = blocks.map((block) => {
-      if (block._type === 'block') {
+      if (isBlock(block)) {
         return renderBlock(h, block, serializers)
-      } else if (block._type === 'list') {
+      } else if (isList(block)) {
         return renderList(h, block, serializers)
       } else {
         return renderCustomType(h, block, serializers)
