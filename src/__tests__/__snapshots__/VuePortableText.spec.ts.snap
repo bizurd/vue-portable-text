@@ -2,6 +2,14 @@
 
 exports[`as = article 1`] = `<article />`;
 
+exports[`block no style > plain text 1`] = `
+<div>
+  <p>
+    This should be normal text
+  </p>
+</div>
+`;
+
 exports[`block.h1 > plain text 1`] = `
 <div>
   <h1>
@@ -16,13 +24,9 @@ exports[`block.h3 (listItem=bullet) > text with marks 1`] = `
     <li>
       <h3>
         This should be a h3
-        <a
-          href="https://example.com"
-        >
-          <strong>
-            This should be a strong link
-          </strong>
-        </a>
+        <strong>
+          This should be a strong link
+        </strong>
       </h3>
     </li>
   </ul>
@@ -37,6 +41,41 @@ exports[`block.h3 > plain text + block.blockquote > plain text 1`] = `
   <blockquote>
     This should be a blockquote
   </blockquote>
+</div>
+`;
+
+exports[`block.normal (listItem=bullet) * 2 with no children for first item > plain text 1`] = `
+<div>
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <p>
+            This should be plain text
+          </p>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`block.normal (listItem=bullet) * 2 with no level on first listItem > plain text 1`] = `
+<div>
+  <ul>
+    <li>
+      <p>
+        This should be plain text
+      </p>
+      <ul>
+        <li>
+          <p>
+            This should be plain text
+          </p>
+        </li>
+      </ul>
+    </li>
+  </ul>
 </div>
 `;
 

@@ -34,7 +34,7 @@ const getListItems = (
   const listItems: ListItem[] = []
 
   let block: PortableTextObject = listItemBlock
-  const level = listItemBlock.level || 1
+  const level = listItemBlock.level
   const listStyleType = listItemBlock.listItem
   while (block) {
     if (
@@ -42,21 +42,34 @@ const getListItems = (
       block.listItem === listStyleType &&
       block.level === level
     ) {
+      const children: PortableTextObject[] = []
+      if (
+        block.children &&
+        Array.isArray(block.children) &&
+        block.children.length
+      ) {
+        children.push({
+          _type: 'block',
+          style: block.style,
+          children: block.children,
+        })
+      }
+
       listItems.push({
         _type: 'listItem',
         level: block.level,
-        children: [block],
+        children,
       })
     } else if (
       isListItemBlock(block) &&
       block.level !== undefined &&
-      block.level > level &&
+      block.level > (level || 1) &&
       listItems.length
     ) {
       const list = createList(block, blocks, serializers)
 
       const lastListItem = listItems[listItems.length - 1]
-      lastListItem.children = [...(lastListItem.children || []), list]
+      lastListItem.children = [...lastListItem.children, list]
     } else {
       blocks.unshift(block)
       break
@@ -229,8 +242,6 @@ export default Vue.extend({
     ) as Serializers
 
     const blocks = groupListItems(this.blocks, serializers)
-
-    console.log(JSON.stringify(blocks))
 
     const children = blocks.map((block) => {
       if (isBlock(block)) {

@@ -68,6 +68,28 @@ test('block.normal > plain text', () => {
   expect(wrapper.element).toMatchSnapshot()
 })
 
+test('block no style > plain text', () => {
+  const normalText = 'This should be normal text'
+
+  const wrapper = mount(VuePortableText, {
+    propsData: {
+      blocks: [
+        {
+          _type: 'block',
+          children: [
+            {
+              _type: 'span',
+              text: normalText,
+            },
+          ],
+        },
+      ],
+    },
+  })
+
+  expect(wrapper.element).toMatchSnapshot()
+})
+
 test('block.h1 > plain text', () => {
   const h1Text = 'This should be a h1'
 
@@ -435,6 +457,72 @@ test('block.normal > customType', () => {
               ],
             },
           ],
+        },
+      ],
+    },
+  })
+
+  expect(wrapper.element).toMatchSnapshot()
+})
+
+test('block.normal (listItem=bullet) * 2 with no level on first listItem > plain text', () => {
+  const plainText = 'This should be plain text'
+
+  const wrapper = mount(VuePortableText, {
+    propsData: {
+      blocks: [
+        {
+          style: 'normal',
+          _type: 'block',
+          children: [
+            {
+              _type: 'span',
+              text: plainText,
+            },
+          ],
+          listItem: 'bullet',
+        },
+        {
+          style: 'normal',
+          _type: 'block',
+          children: [
+            {
+              _type: 'span',
+              text: plainText,
+            },
+          ],
+          level: 2,
+          listItem: 'bullet',
+        },
+      ],
+    },
+  })
+
+  expect(wrapper.element).toMatchSnapshot()
+})
+
+test('block.normal (listItem=bullet) * 2 with no children for first item > plain text', () => {
+  const plainText = 'This should be plain text'
+
+  const wrapper = mount(VuePortableText, {
+    propsData: {
+      blocks: [
+        {
+          style: 'normal',
+          _type: 'block',
+          listItem: 'bullet',
+        },
+        {
+          style: 'normal',
+          _type: 'block',
+          children: [
+            {
+              _type: 'span',
+              text: plainText,
+            },
+          ],
+          level: 2,
+          listItem: 'bullet',
         },
       ],
     },
