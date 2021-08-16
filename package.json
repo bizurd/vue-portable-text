@@ -2,9 +2,9 @@
   "name": "@bizurd/vue-portable-text",
   "version": "0.1.2",
   "description": "A Vue component to render sanity.io's portable text.",
-  "main": "dist/vue-portable-text.js",
-  "module": "dist/vue-portable-text.esm.js",
-  "unpkg": "dist/vue-portable-text.umd.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
