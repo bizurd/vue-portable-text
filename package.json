@@ -1,6 +1,6 @@
 {
   "name": "@bizurd/vue-portable-text",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A Vue component to render sanity.io's portable text.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
