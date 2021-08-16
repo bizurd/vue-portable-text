@@ -8,7 +8,7 @@ on:
     types: [created]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
       - run: yarn test
 
   publish-npm:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,12 +28,13 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: yarn install --frozen-lockfile
+      - run: yarn build
       - run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
   publish-gpr:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,6 +46,7 @@ jobs:
           node-version: 14
           registry-url: https://npm.pkg.github.com/
       - run: yarn install --frozen-lockfile
+      - run: yarn build
       - run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
