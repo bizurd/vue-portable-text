@@ -62,7 +62,11 @@ export default {
 
 ### Custom Serializers
 
-You can create custom serializers using Vue components. Here's an example that adds ID's to headings:
+You can create custom serializers using Vue components.
+
+#### Example 1: Heading Component with `id`
+
+Here's an example that adds `id` to headings.
 
 (You'll need `slugify` installed for this example)
 
